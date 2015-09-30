@@ -51,9 +51,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;
 
 /*
- * This is the VIDIVOX prototype for SE206 assignment 3
- * Authors: Kaimin Li, Aaron Zhong
- * upi: kli438, azho472
+ * This is the VIDIVOX Beta for Assignment 4
+ * Authors: Kaimin Li, Aaron Zhong(prototype only)
+ * upi: kli438
  */
 public class Player extends JFrame {
 
@@ -75,6 +75,7 @@ public class Player extends JFrame {
 	protected final JTextArea txtArea;
 	protected JButton btnCreateMp;
 	protected static Player frame;
+	protected Timer t;
 	/**
 	 * Launch the application.
 	 */
@@ -104,7 +105,7 @@ public class Player extends JFrame {
 	public Player() {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1079, 518);
+		setBounds(100, 100, 1079, 535);
 		contentPane = new JPanel();
 		contentPane.setForeground(Color.LIGHT_GRAY);
 		contentPane.setBackground(Color.DARK_GRAY);
@@ -131,7 +132,7 @@ public class Player extends JFrame {
 				}
 			}
 		});
-		btnReverse.setBounds(33, 450, 70, 25);
+		btnReverse.setBounds(33, 471, 70, 25);
 		contentPane.add(btnReverse);
 
 		//Play and pause button
@@ -148,7 +149,7 @@ public class Player extends JFrame {
 				}
 			}
 		});
-		btnPlay.setBounds(112, 450, 117, 25);
+		btnPlay.setBounds(112, 471, 117, 25);
 		contentPane.add(btnPlay);
 
 		//fastforward button
@@ -175,7 +176,7 @@ public class Player extends JFrame {
 		});
 
 
-		btnFastForward.setBounds(241, 450, 70, 25);
+		btnFastForward.setBounds(241, 471, 70, 25);
 		contentPane.add(btnFastForward);
 
 		//set the maximum character to 200 so the festival voice doesn't die
@@ -209,7 +210,7 @@ public class Player extends JFrame {
 				video.mute();
 			}
 		});
-		btnMute.setBounds(323, 450, 70, 25);
+		btnMute.setBounds(323, 471, 70, 25);
 		contentPane.add(btnMute);
 
 		//Button for listening to text entered
@@ -231,7 +232,7 @@ public class Player extends JFrame {
 		});
 
 		//Button to allow user to create an mp3 file from the text entered
-		btnListen.setBounds(750, 192, 135, 40);
+		btnListen.setBounds(750, 131, 135, 40);
 		contentPane.add(btnListen);
 
 		btnCreateMp = new JButton("Create mp3");
@@ -262,13 +263,13 @@ public class Player extends JFrame {
 		});
 
 
-		btnCreateMp.setBounds(905, 192, 142, 40);
+		btnCreateMp.setBounds(905, 131, 142, 40);
 		contentPane.add(btnCreateMp);
 
 		//label for mp3 file
 		mp3Label = new JLabel("No mp3 file chosen");
 		mp3Label.setForeground(Color.WHITE);
-		mp3Label.setBounds(750, 310, 297, 15);
+		mp3Label.setBounds(750, 233, 297, 15);
 		contentPane.add(mp3Label);
 
 		//Browser for mp3 files
@@ -293,7 +294,7 @@ public class Player extends JFrame {
 				}
 			}
 		});
-		btnBrowseMp.setBounds(750, 260, 135, 40);
+		btnBrowseMp.setBounds(750, 183, 135, 40);
 		contentPane.add(btnBrowseMp);
 
 		//Button to combined selected audio and video files
@@ -328,7 +329,7 @@ public class Player extends JFrame {
 		btnAddCom.setBackground(Color.GRAY);
 		btnAddCom.setForeground(Color.WHITE);
 		btnAddCom.setFont(new Font("Dialog", Font.BOLD, 22));
-		btnAddCom.setBounds(750, 337, 297, 100);
+		btnAddCom.setBounds(750, 260, 297, 100);
 
 		btnAddCom.setEnabled(false);
 		contentPane.add(btnAddCom);
@@ -341,7 +342,7 @@ public class Player extends JFrame {
 
 		lblChars = new JLabel("200/200");
 		lblChars.setForeground(Color.WHITE);
-		lblChars.setBounds(980, 170, 70, 15);
+		lblChars.setBounds(977, 115, 70, 15);
 		contentPane.add(lblChars);
 		//simple text area for the user to enter text
 		txtArea = new JTextArea();
@@ -356,7 +357,7 @@ public class Player extends JFrame {
 
 		//Allow text area to scroll
 		JScrollPane scrollPane = new JScrollPane(txtArea);
-		scrollPane.setBounds(750, 41, 297, 122);
+		scrollPane.setBounds(750, 41, 297, 62);
 		contentPane.add(scrollPane);
 
 		playerPanel.add(mediaPlayerComponent, BorderLayout.CENTER);
@@ -399,7 +400,7 @@ public class Player extends JFrame {
 
 		final JLabel timerLabel = new JLabel("0 sec");
 		timerLabel.setForeground(Color.WHITE);
-		timerLabel.setBounds(662, 455, 70, 15);
+		timerLabel.setBounds(662, 476, 70, 15);
 		contentPane.add(timerLabel);
 
 		//Plays the selected mp3 file
@@ -429,7 +430,7 @@ public class Player extends JFrame {
 		});
 		btnPlaymp3.setBackground(Color.GRAY);
 		btnPlaymp3.setForeground(Color.WHITE);
-		btnPlaymp3.setBounds(905, 260, 142, 40);
+		btnPlaymp3.setBounds(905, 183, 142, 40);
 		contentPane.add(btnPlaymp3);
 		
 		//Volume slider
@@ -444,13 +445,34 @@ public class Player extends JFrame {
 		volSlider.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Volume", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
 		volSlider.setForeground(Color.BLACK);
 		volSlider.setBackground(Color.DARK_GRAY);
-		volSlider.setBounds(444, 450, 200, 25);
+		volSlider.setBounds(444, 471, 200, 25);
 		contentPane.add(volSlider);
+		
+		//Video slider that allows the user to drag to another time in the video
+		final JSlider videoSlider = new JSlider();
+		videoSlider.setMaximum(10000);
+		videoSlider.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				video.pause();
+				t.stop();
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {	
+				float sliderPos = videoSlider.getValue()/10000.0f;
+				video.setPosition(sliderPos);
+				t.restart();
+				video.play();
+			}
+		});
+		
+		videoSlider.setValue(0);
+		videoSlider.setBackground(Color.DARK_GRAY);
+		videoSlider.setBounds(33, 446, 699, 16);
+		contentPane.add(videoSlider);
 
-
-
-		//Timer used to check video time
-		Timer t = new Timer(200, new ActionListener() {
+		//Timer used to check video time, and to update the video slider
+		t = new Timer(100, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(video.getMediaPlayerState().toString().equalsIgnoreCase("libvlc_Ended")){
@@ -458,6 +480,7 @@ public class Player extends JFrame {
 					//This doesn't actually display, timer refreshes to 0
 				}else{
 					timerLabel.setText((video.getTime()/1000)+ " sec");	//get video time
+					videoSlider.setValue((int) (video.getPosition() * 10000.0f));
 				}
 			}
 		}); 
