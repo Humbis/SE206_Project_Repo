@@ -49,6 +49,7 @@ import javax.swing.border.MatteBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.JComboBox;
 
 /*
  * This is the VIDIVOX Beta for Assignment 4
@@ -71,11 +72,13 @@ public class Player extends JFrame {
 	private JLabel lblChars;
 	protected final JLabel mp3Label;
 	protected JButton btnAddCom;
+	protected JButton btnAudioOffset;
 	protected JButton btnListen;
 	protected final JTextArea txtArea;
 	protected JButton btnCreateMp;
 	protected static Player frame;
 	protected Timer t;
+	protected int offsetTime;
 	/**
 	 * Launch the application.
 	 */
@@ -269,7 +272,7 @@ public class Player extends JFrame {
 		//label for mp3 file
 		mp3Label = new JLabel("No mp3 file chosen");
 		mp3Label.setForeground(Color.WHITE);
-		mp3Label.setBounds(750, 233, 297, 15);
+		mp3Label.setBounds(750, 307, 297, 15);
 		contentPane.add(mp3Label);
 
 		//Browser for mp3 files
@@ -290,11 +293,12 @@ public class Player extends JFrame {
 					mp3Label.setText(mp3File.getName());
 					if (videoFile != null) {
 						btnAddCom.setEnabled(true);
+						btnAudioOffset.setEnabled(true);
 					}
 				}
 			}
 		});
-		btnBrowseMp.setBounds(750, 183, 135, 40);
+		btnBrowseMp.setBounds(750, 257, 135, 40);
 		contentPane.add(btnBrowseMp);
 
 		//Button to combined selected audio and video files
@@ -311,13 +315,13 @@ public class Player extends JFrame {
 					int reply = JOptionPane.showConfirmDialog(null, "File already exists, overwrite?", "Overwrite?", JOptionPane.YES_NO_OPTION);
 					if (reply == JOptionPane.YES_OPTION){
 						//generate swingworker instance
-						AddComDoInBackground adder = new AddComDoInBackground(frame, comOutName);
+						AddComDoInBackground adder = new AddComDoInBackground(frame, comOutName, offsetTime);
 
 						adder.execute();
 					}
 				} else {
 					//generate swingworker instance
-					AddComDoInBackground adder = new AddComDoInBackground(frame, comOutName);
+					AddComDoInBackground adder = new AddComDoInBackground(frame, comOutName, offsetTime);
 
 					adder.execute();
 				}
@@ -329,7 +333,7 @@ public class Player extends JFrame {
 		btnAddCom.setBackground(Color.GRAY);
 		btnAddCom.setForeground(Color.WHITE);
 		btnAddCom.setFont(new Font("Dialog", Font.BOLD, 22));
-		btnAddCom.setBounds(750, 260, 297, 100);
+		btnAddCom.setBounds(750, 334, 297, 100);
 
 		btnAddCom.setEnabled(false);
 		contentPane.add(btnAddCom);
@@ -378,7 +382,7 @@ public class Player extends JFrame {
 				//Add file chooser as well as set a filter so that user only picks avi or mp4 files
 				final JFileChooser fileChooser = new JFileChooser();
 				fileChooser.setAcceptAllFileFilterUsed(false);
-				FileFilter filter = new FileNameExtensionFilter("Video files (avi and mp4)", new String[] {"avi", "AVI"});
+				FileFilter filter = new FileNameExtensionFilter("Video files (avi)", new String[] {"avi", "AVI"});
 				fileChooser.setFileFilter(filter); 
 				int returnVal = fileChooser.showOpenDialog(new JFrame());
 
@@ -389,6 +393,7 @@ public class Player extends JFrame {
 					videoLabel.setText(videoFile.getName());
 					if (mp3File != null){
 						btnAddCom.setEnabled(true);
+						btnAudioOffset.setEnabled(true);
 					}
 				}
 			}
@@ -430,7 +435,7 @@ public class Player extends JFrame {
 		});
 		btnPlaymp3.setBackground(Color.GRAY);
 		btnPlaymp3.setForeground(Color.WHITE);
-		btnPlaymp3.setBounds(905, 183, 142, 40);
+		btnPlaymp3.setBounds(905, 257, 142, 40);
 		contentPane.add(btnPlaymp3);
 		
 		//Volume slider
@@ -470,6 +475,41 @@ public class Player extends JFrame {
 		videoSlider.setBackground(Color.DARK_GRAY);
 		videoSlider.setBounds(33, 446, 699, 16);
 		contentPane.add(videoSlider);
+		
+		//Audio offset option. This brings up a dialogue that asks for a offset time for the audio commentary.
+		btnAudioOffset = new JButton("Audio Offset");
+		btnAudioOffset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//get total video length
+				int maxTime = (int) (video.getLength() / 1000.0f);
+				//Switch to the audio file to get its length
+				video.playMedia(mp3File.getAbsolutePath());
+				video.stop();
+				//get audio length and work out a range for the offset
+				maxTime = (int) (maxTime - (video.getLength() / 1000.0f));
+				//get user input for offset
+				String timeStr = JOptionPane.showInputDialog("Please enter the offset (in seconds, Max = " + maxTime + ")");
+				if(timeStr != null){	//don't parse if cancelled
+					try{
+						offsetTime = Integer.parseInt(timeStr);
+					}catch(NumberFormatException e){	//check for non numerical inputs
+						JOptionPane.showMessageDialog(null, "Please enter a number");
+					}
+				}
+				
+				if(offsetTime > maxTime){	//check for inputs greater than limit
+					JOptionPane.showMessageDialog(null, "The offset is too big! The audio file won't fit.");
+					offsetTime = 0;		//reset offset to 0 to prevent errors
+					return;
+				}	//go back to the video
+				video.playMedia(videoFile.getAbsolutePath());
+			}
+		});
+		btnAudioOffset.setForeground(Color.WHITE);
+		btnAudioOffset.setBackground(Color.GRAY);
+		btnAudioOffset.setBounds(750, 446, 142, 25);
+		btnAudioOffset.setEnabled(false);
+		contentPane.add(btnAudioOffset);
 
 		//Timer used to check video time, and to update the video slider
 		t = new Timer(100, new ActionListener() {
