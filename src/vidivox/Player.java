@@ -108,7 +108,7 @@ public class Player extends JFrame {
 	public Player() {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1079, 535);
+		setBounds(100, 100, 1079, 580);
 		contentPane = new JPanel();
 		contentPane.setForeground(Color.LIGHT_GRAY);
 		contentPane.setBackground(Color.DARK_GRAY);
@@ -135,7 +135,7 @@ public class Player extends JFrame {
 				}
 			}
 		});
-		btnReverse.setBounds(33, 471, 70, 25);
+		btnReverse.setBounds(33, 471, 54, 25);
 		contentPane.add(btnReverse);
 
 		//Play and pause button
@@ -152,7 +152,7 @@ public class Player extends JFrame {
 				}
 			}
 		});
-		btnPlay.setBounds(112, 471, 117, 25);
+		btnPlay.setBounds(90, 471, 113, 25);
 		contentPane.add(btnPlay);
 
 		//fastforward button
@@ -179,7 +179,7 @@ public class Player extends JFrame {
 		});
 
 
-		btnFastForward.setBounds(241, 471, 70, 25);
+		btnFastForward.setBounds(205, 471, 54, 25);
 		contentPane.add(btnFastForward);
 
 		//set the maximum character to 200 so the festival voice doesn't die
@@ -213,7 +213,7 @@ public class Player extends JFrame {
 				video.mute();
 			}
 		});
-		btnMute.setBounds(323, 471, 70, 25);
+		btnMute.setBounds(261, 471, 70, 25);
 		contentPane.add(btnMute);
 
 		//Button for listening to text entered
@@ -450,7 +450,7 @@ public class Player extends JFrame {
 		volSlider.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Volume", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 255)));
 		volSlider.setForeground(Color.BLACK);
 		volSlider.setBackground(Color.DARK_GRAY);
-		volSlider.setBounds(444, 471, 200, 25);
+		volSlider.setBounds(345, 471, 219, 25);
 		contentPane.add(volSlider);
 		
 		//Video slider that allows the user to drag to another time in the video
@@ -510,6 +510,38 @@ public class Player extends JFrame {
 		btnAudioOffset.setBounds(750, 446, 142, 25);
 		btnAudioOffset.setEnabled(false);
 		contentPane.add(btnAudioOffset);
+		
+		//Label that shows the current playing speed
+		final JLabel speedLabel = new JLabel("1.00");
+		speedLabel.setForeground(Color.WHITE);
+		speedLabel.setBounds(271, 518, 70, 15);
+		contentPane.add(speedLabel);
+		
+		//Slider to control the player speed, up to 2 times and 0.25 times
+		final JSlider speedSlider = new JSlider();
+		speedSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				float rate = (float) (0.25 *speedSlider.getValue());
+				video.setRate(rate);
+				speedLabel.setText(Float.toString(rate));
+			}
+		});
+		speedSlider.setSnapToTicks(true);
+		speedSlider.setValue(4);
+		speedSlider.setForeground(Color.WHITE);
+		speedSlider.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Speed", TitledBorder.LEADING, TitledBorder.TOP, null, Color.WHITE));
+		speedSlider.setMaximum(16);
+		speedSlider.setMinimum(1);
+		speedSlider.setBackground(Color.DARK_GRAY);
+		speedSlider.setBounds(33, 508, 226, 25);
+		contentPane.add(speedSlider);
+		
+		JLabel textAreaLabel = new JLabel("Enter text here for speech");
+		textAreaLabel.setForeground(Color.WHITE);
+		textAreaLabel.setBounds(750, 115, 226, 15);
+		contentPane.add(textAreaLabel);
+		
+		
 
 		//Timer used to check video time, and to update the video slider
 		t = new Timer(100, new ActionListener() {
