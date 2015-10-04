@@ -9,10 +9,12 @@ public class AddComDoInBackground extends SwingWorker<Void, Void>{
 	private Player player;
 	private String comOutName;
 	private int time = 0;
-	public AddComDoInBackground(Player p, String n, int t){
+	private boolean overwrite;
+	public AddComDoInBackground(Player p, String n, int t, boolean o){
 		player = p;
 		comOutName = n;
 		time = t;
+		overwrite = o;
 	}
 	@Override
 	protected Void doInBackground() throws Exception {
@@ -29,12 +31,19 @@ public class AddComDoInBackground extends SwingWorker<Void, Void>{
 		//concatenate this with the audio file that the user selected
 		Process offsetApply = offset.start();
 		offsetApply.waitFor();
-		//Strip the audio from the video then combine it with the user selected audio 
-		Process split = splitter.start();
-		split.waitFor();
-		//Combine this back with the video
-		Process combine = combiner.start();
-		combine.waitFor();
+		if(overwrite == true){
+			//If overwrite is true, do not extract video audio, instead overwrite it with the input audio
+			ProcessBuilder overwriter = new ProcessBuilder("/bin/bash", "-c", "ffmpeg -i output.mp3 -i " + player.videoFile.getAbsolutePath() + " -map 0:a -map 1:v " + comOutName + ".avi");
+			Process overwrite = overwriter.start();
+			overwrite.waitFor();
+		}else{
+			//Strip the audio from the video then combine it with the user selected audio 
+			Process split = splitter.start();
+			split.waitFor();
+			//Combine this back with the video
+			Process combine = combiner.start();
+			combine.waitFor();
+		}
 		return null;
 	}
 

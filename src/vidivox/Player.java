@@ -50,6 +50,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
 
 /*
  * This is the VIDIVOX Beta for Assignment 4
@@ -63,9 +64,10 @@ public class Player extends JFrame {
 	 */
 	private final EmbeddedMediaPlayerComponent mediaPlayerComponent;
 	private final EmbeddedMediaPlayer video ;
-	volatile private boolean mouseDown = false;
 	private JPanel contentPane;
+	volatile private boolean mouseDown = false;
 	private boolean isMp3Playing = false;
+	private boolean isOverwrite = false;
 	protected File videoFile;
 	protected File mp3File;
 	private DefaultStyledDocument docfilt = new DefaultStyledDocument();
@@ -234,10 +236,41 @@ public class Player extends JFrame {
 			}
 		});
 
-		//Button to allow user to create an mp3 file from the text entered
 		btnListen.setBounds(750, 131, 135, 40);
 		contentPane.add(btnListen);
 
+		//Plays the selected mp3 file
+		final JButton btnPlaymp3 = new JButton("Play Mp3");
+		btnPlaymp3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//checks whether mp3 is playing or video is
+				if(isMp3Playing == false){
+					if(mp3File != null){
+						isMp3Playing = true;
+						btnPlaymp3.setText("Back to Video");	//change button name
+						video.playMedia(mp3File.getAbsolutePath());
+					}	
+				}else{
+					//click again to go back to video
+					if(videoFile != null){
+						isMp3Playing = false;
+						btnPlaymp3.setText("Play Mp3");
+						video.playMedia(videoFile.getAbsolutePath());
+					}else{
+						isMp3Playing = false;
+						btnPlaymp3.setText("Play Mp3");
+					}
+				}
+				
+			}
+		});
+		btnPlaymp3.setBackground(Color.GRAY);
+		btnPlaymp3.setEnabled(false);
+		btnPlaymp3.setForeground(Color.WHITE);
+		btnPlaymp3.setBounds(905, 257, 142, 40);
+		contentPane.add(btnPlaymp3);
+		
+		//Button to allow user to create an mp3 file from the text entered
 		btnCreateMp = new JButton("Create mp3");
 		btnCreateMp.setEnabled(false);
 		btnCreateMp.setBackground(Color.GRAY);
@@ -261,6 +294,7 @@ public class Player extends JFrame {
 
 						maker.execute();
 					}
+					btnPlaymp3.setEnabled(true);
 				}
 			}
 		});
@@ -274,7 +308,8 @@ public class Player extends JFrame {
 		mp3Label.setForeground(Color.WHITE);
 		mp3Label.setBounds(750, 307, 297, 15);
 		contentPane.add(mp3Label);
-
+		
+		
 		//Browser for mp3 files
 		JButton btnBrowseMp = new JButton("Browse mp3...");
 		btnBrowseMp.setBackground(Color.GRAY);
@@ -291,6 +326,7 @@ public class Player extends JFrame {
 				if(returnVal == JFileChooser.APPROVE_OPTION){
 					mp3File = fileChooser.getSelectedFile();
 					mp3Label.setText(mp3File.getName());
+					btnPlaymp3.setEnabled(true);
 					if (videoFile != null) {
 						btnAddCom.setEnabled(true);
 						btnAudioOffset.setEnabled(true);
@@ -315,13 +351,13 @@ public class Player extends JFrame {
 					int reply = JOptionPane.showConfirmDialog(null, "File already exists, overwrite?", "Overwrite?", JOptionPane.YES_NO_OPTION);
 					if (reply == JOptionPane.YES_OPTION){
 						//generate swingworker instance
-						AddComDoInBackground adder = new AddComDoInBackground(frame, comOutName, offsetTime);
+						AddComDoInBackground adder = new AddComDoInBackground(frame, comOutName, offsetTime, isOverwrite);
 
 						adder.execute();
 					}
 				} else {
 					//generate swingworker instance
-					AddComDoInBackground adder = new AddComDoInBackground(frame, comOutName, offsetTime);
+					AddComDoInBackground adder = new AddComDoInBackground(frame, comOutName, offsetTime, isOverwrite);
 
 					adder.execute();
 				}
@@ -407,36 +443,6 @@ public class Player extends JFrame {
 		timerLabel.setForeground(Color.WHITE);
 		timerLabel.setBounds(662, 476, 70, 15);
 		contentPane.add(timerLabel);
-
-		//Plays the selected mp3 file
-		final JButton btnPlaymp3 = new JButton("Play Mp3");
-		btnPlaymp3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				//checks whether mp3 is playing or video is
-				if(isMp3Playing == false){
-					if(mp3File != null){
-						isMp3Playing = true;
-						btnPlaymp3.setText("Back to Video");	//change button name
-						video.playMedia(mp3File.getAbsolutePath());
-					}	
-				}else{
-					//click again to go back to video
-					if(videoFile != null){
-						isMp3Playing = false;
-						btnPlaymp3.setText("Play Mp3");
-						video.playMedia(videoFile.getAbsolutePath());
-					}else{
-						isMp3Playing = false;
-						btnPlaymp3.setText("Play Mp3");
-					}
-				}
-				
-			}
-		});
-		btnPlaymp3.setBackground(Color.GRAY);
-		btnPlaymp3.setForeground(Color.WHITE);
-		btnPlaymp3.setBounds(905, 257, 142, 40);
-		contentPane.add(btnPlaymp3);
 		
 		//Volume slider
 		final JSlider volSlider = new JSlider();
@@ -476,6 +482,12 @@ public class Player extends JFrame {
 		videoSlider.setBounds(33, 446, 699, 16);
 		contentPane.add(videoSlider);
 		
+		//Label that displays the current audio offset
+		final JLabel offsetLabel = new JLabel("Offset: 0 seconds");
+		offsetLabel.setForeground(Color.WHITE);
+		offsetLabel.setBounds(887, 476, 176, 15);
+		contentPane.add(offsetLabel);
+		
 		//Audio offset option. This brings up a dialogue that asks for a offset time for the audio commentary.
 		btnAudioOffset = new JButton("Audio Offset");
 		btnAudioOffset.addActionListener(new ActionListener() {
@@ -492,6 +504,7 @@ public class Player extends JFrame {
 				if(timeStr != null){	//don't parse if cancelled
 					try{
 						offsetTime = Integer.parseInt(timeStr);
+						offsetLabel.setText("Offset: " + offsetTime + " seconds");
 					}catch(NumberFormatException e){	//check for non numerical inputs
 						JOptionPane.showMessageDialog(null, "Please enter a number");
 					}
@@ -500,6 +513,7 @@ public class Player extends JFrame {
 				if(offsetTime > maxTime){	//check for inputs greater than limit
 					JOptionPane.showMessageDialog(null, "The offset is too big! The audio file won't fit.");
 					offsetTime = 0;		//reset offset to 0 to prevent errors
+					offsetLabel.setText("Offset: " + offsetTime + " seconds");
 					return;
 				}	//go back to the video
 				video.playMedia(videoFile.getAbsolutePath());
@@ -507,7 +521,7 @@ public class Player extends JFrame {
 		});
 		btnAudioOffset.setForeground(Color.WHITE);
 		btnAudioOffset.setBackground(Color.GRAY);
-		btnAudioOffset.setBounds(750, 446, 142, 25);
+		btnAudioOffset.setBounds(750, 471, 131, 25);
 		btnAudioOffset.setEnabled(false);
 		contentPane.add(btnAudioOffset);
 		
@@ -536,12 +550,18 @@ public class Player extends JFrame {
 		speedSlider.setBounds(33, 508, 226, 25);
 		contentPane.add(speedSlider);
 		
-		JLabel textAreaLabel = new JLabel("Enter text here for speech");
-		textAreaLabel.setForeground(Color.WHITE);
-		textAreaLabel.setBounds(750, 115, 226, 15);
-		contentPane.add(textAreaLabel);
-		
-		
+		//Checkbox that allows the users to overwrite the video's audio with the selected audio.
+		final JCheckBox overwriteCheck = new JCheckBox("Overwrite Existing Audio");
+		overwriteCheck.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				isOverwrite = overwriteCheck.isSelected();
+			}
+		});
+		overwriteCheck.setForeground(Color.WHITE);
+		overwriteCheck.setBackground(Color.DARK_GRAY);
+		overwriteCheck.setBounds(849, 442, 198, 23);
+		contentPane.add(overwriteCheck);
+				
 
 		//Timer used to check video time, and to update the video slider
 		t = new Timer(100, new ActionListener() {
