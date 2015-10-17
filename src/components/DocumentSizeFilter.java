@@ -33,10 +33,14 @@ package components;
 
 /* A 1.4 class used by TextComponentDemo.java. */
 
-import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.Toolkit;
 
+/**
+ * Character counter for the textbox in the side menu.
+ * This section is written by Oracle. I do not own the code in this class.
+ * @author Oracle (used by Kaimin Li)
+ */
 public class DocumentSizeFilter extends DocumentFilter {
     int maxCharacters;
     boolean DEBUG = false;

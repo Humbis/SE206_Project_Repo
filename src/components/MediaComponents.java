@@ -1,45 +1,19 @@
 package components;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.DefaultStyledDocument;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.event.*;
-import javax.swing.Timer;
-
-import java.awt.Font;
-
-import uk.co.caprica.vlcj.binding.LibVlc;
-import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import vidivox.Player;
-
-import com.sun.jna.Native;
-import com.sun.jna.NativeLibrary;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import javax.swing.JTextArea;
-import components.DocumentSizeFilter;
 import java.awt.Color;
 import java.awt.SystemColor;
-import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.JCheckBox;
 
 /**
  * This is the class containing all major components to do with the media player. 
