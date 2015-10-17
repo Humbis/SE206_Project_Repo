@@ -60,6 +60,7 @@ public class CreateMp3DoInBackground extends SwingWorker<Void,Void> {
 		
 		if (player.videoFile != null) {
 			player.btnAddCom.setEnabled(true);
+			player.btnAudioOffset.setEnabled(true);
 		}
 	}
 }
