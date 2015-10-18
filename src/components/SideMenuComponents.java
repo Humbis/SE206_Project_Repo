@@ -1,14 +1,16 @@
 package components;
 import javax.swing.text.DefaultStyledDocument;
+
+import audioFunctions.AddComDoInBackground;
+import audioFunctions.CreateMp3DoInBackground;
+import audioFunctions.ListenDoInBackground;
+
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JLabel;
 import javax.swing.event.*;
 import java.awt.Font;
 
-import vidivox.AddComDoInBackground;
-import vidivox.CreateMp3DoInBackground;
-import vidivox.ListenDoInBackground;
 import vidivox.Player;
 
 import java.awt.event.ActionListener;

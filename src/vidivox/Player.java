@@ -35,7 +35,7 @@ import javax.swing.JSlider;
 /**
  * This is the main class, where the GUI and the player is assembled
  * This class also includes the implementations of file broswers
- * @author Kaimin Li, Aaron Zhong(prototype only)
+ * @author Kaimin Li
  * upi: kli438
  */
 public class Player extends JFrame {

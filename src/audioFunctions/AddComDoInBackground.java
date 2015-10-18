@@ -1,10 +1,11 @@
-package vidivox;
+package audioFunctions;
 
 import java.io.File;
 
 import javax.swing.SwingWorker;
 
 import components.SideMenuComponents;
+import vidivox.Player;
 
 /**
  * This is the swingWorker for combining the audio with the video

@@ -1,4 +1,4 @@
-package vidivox;
+package audioFunctions;
 
 import java.io.IOException;
 
