@@ -13,6 +13,9 @@ import components.SideMenuComponents;
  */
 public class ListenDoInBackground extends SwingWorker<Void, Void>{
 	
+	/*
+	 * Opens a thread and execute the text to speech commands for Festival
+	 */
 	@Override
 	protected Void doInBackground() throws Exception {
 		//run festival in bash from the entered text
@@ -28,7 +31,9 @@ public class ListenDoInBackground extends SwingWorker<Void, Void>{
 		}
 		return null;
 	}
-	//after speech is done, re enable listen button
+	/*
+	 * Called after doInBackground finishes. After speech is done, re enable listen button
+	 */
 	@Override
 	protected void done(){
 		SideMenuComponents.sideMenu.getListenBtn().setEnabled(true);

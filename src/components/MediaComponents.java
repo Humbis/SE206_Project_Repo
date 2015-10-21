@@ -32,6 +32,9 @@ public class MediaComponents {
 	volatile private boolean mouseDown = false;
 	protected final JLabel speedLabel;
 	
+	/**
+	 * Constructor for media player components such as play/pause, volume control and playback speed control
+	 */
 	public MediaComponents(){
 		//Reverse button
 		rewind = new JButton("<<");
@@ -143,7 +146,7 @@ public class MediaComponents {
 	}
 	
 	
-	/*
+	/**
 	 * check method to ensure concurrency when multiple events are fired
 	 * This is just in case other events are fired while fastforwarding or reversing (highly unlikely)
 	 */
@@ -154,7 +157,10 @@ public class MediaComponents {
 		return true;
 	}
 	
-	//FF and rewind thread
+	/**
+	 * FF and rewind thread used to ensure GUI concurrency
+	 * @param arg This determines whether the thread will fast forward or rewind
+	 */
 	private void initVidControlThread(final String arg){	                    
 		if (checkAndMark()) {	//don't start another thread if this one is still running
 			new Thread() {

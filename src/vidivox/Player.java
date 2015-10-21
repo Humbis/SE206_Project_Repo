@@ -56,7 +56,7 @@ public class Player extends JFrame {
 	protected Timer t;
 	protected int offsetTime;
 	/**
-	 * Launch the application.
+	 * Launch the application. Set up the GUI
 	 */
 	public static void main(String[] args) {
 

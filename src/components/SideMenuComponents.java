@@ -45,7 +45,9 @@ public class SideMenuComponents {
 	private JScrollPane scrollPane;
 	public static SideMenuComponents sideMenu;
 	
-	
+	/**
+	 * Constructor that initialises the side menu components. This includes all audio functionalities.
+	 */
 	public SideMenuComponents(){
 		//Button for listening to text entered
 		btnListen = new JButton("Listen");
@@ -178,13 +180,11 @@ public class SideMenuComponents {
 						//generate swingworker instance
 						AddComDoInBackground adder = new AddComDoInBackground(comOutName, offsetTime, isOverwrite);
 						adder.execute();
-						JOptionPane.showMessageDialog(null, "Your new video is saved to " + System.getProperty("user.dir") + ". Please wait a while before browsing for the video.");
 					}
 				} else {
 					//generate swingworker instance
 					AddComDoInBackground adder = new AddComDoInBackground(comOutName, offsetTime, isOverwrite);
 					adder.execute();
-					JOptionPane.showMessageDialog(null, "Your new video is saved to " + System.getProperty("user.dir") + ". Please wait a while before browsing for the video.");
 				}
 			}
 		});
@@ -249,6 +249,9 @@ public class SideMenuComponents {
 		sideMenu = this;
 	}
 	
+	/**
+	 * Counts the number of characters available to the user. This decreases every time the user enters a character
+	 */
 	private void charCount() {
 		//Set a label to indicate how many characters remaining
 		lblChars.setText((200 - docfilt.getLength())+"/200");

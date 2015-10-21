@@ -2,8 +2,10 @@ package audioFunctions;
 
 import java.io.File;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
+import components.FileCreationProgressBar;
 import components.SideMenuComponents;
 import vidivox.Player;
 
@@ -16,6 +18,7 @@ public class AddComDoInBackground extends SwingWorker<Void, Void>{
 	private String comOutName;
 	private int time = 0;
 	private boolean overwrite;
+	private FileCreationProgressBar f;
 	public AddComDoInBackground(String n, int t, boolean o){
 		comOutName = n;
 		time = t;
@@ -29,6 +32,10 @@ public class AddComDoInBackground extends SwingWorker<Void, Void>{
 		ProcessBuilder offset = new ProcessBuilder("/bin/bash", "-c", "ffmpeg -i \"concat:empty.mp3|" + Player.mp3File.getAbsolutePath() + "\" -c copy output.mp3");
 		ProcessBuilder splitter = new ProcessBuilder("/bin/bash", "-c", "ffmpeg -i " + Player.videoFile.getAbsolutePath() + " -i output.mp3 -filter_complex amix=inputs=2:duration=first temp.mp3");
 		ProcessBuilder combiner = new ProcessBuilder("/bin/bash", "-c", "ffmpeg -i temp.mp3 -i " + Player.videoFile.getAbsolutePath() + " -map 0:a -map 1:v " + comOutName + ".avi");
+		
+		//Set up progress bar
+		f = new FileCreationProgressBar();
+		f.setVisible(true);
 		
 		//Need to create a empty audio file the length of the offset
 		Process offsetGen = empty.start();
@@ -51,7 +58,7 @@ public class AddComDoInBackground extends SwingWorker<Void, Void>{
 		}
 		return null;
 	}
-
+	
 	@Override
 	protected void done(){
 		//remove the temporary mp3 files that was created
@@ -66,6 +73,8 @@ public class AddComDoInBackground extends SwingWorker<Void, Void>{
 			e.printStackTrace();
 		}
 		
+		f.setVisible(false);
+		JOptionPane.showMessageDialog(null, "Your new video is saved to " + System.getProperty("user.dir") + ".");
 		if (Player.videoFile != null) {
 			SideMenuComponents.sideMenu.getAddComBtn().setEnabled(true);
 		}
